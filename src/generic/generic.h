@@ -165,6 +165,36 @@ typedef void* (handler_fn) (void*);
 #define MINUS(n, amount)                                            \
     ((n) - (amount))
 
+#define SHR32(x,n)              ((u32)(x) >> ((u32)(n) & 31u))
+#define SHL32(x,n)              ((u32)(x) << ((u32)(n) & 31u))
+
+#define SHR64(x,n)              ((u64)(x) >> ((u64)(n) & 63u))
+#define SHL64(x,n)              ((u64)(x) << ((u64)(n) & 63u))
+
+#define ROR32(x,n) ( (u32)( ((u32)(x) >> ((u32)(n) & 31u)) |            \
+                             ((u32)(x) << ((-((u32)(n) & 31u)) & 31u)) ) )
+
+#define ROL32(x,n) ( (u32)( ((u32)(x) << ((u32)(n) & 31u)) |            \
+                             ((u32)(x) >> ((-((u32)(n) & 31u)) & 31u)) ) )
+
+#define ROR64(x,n) ( (u64)(( (u64)(x) >> ((u64)(n) & 63u) ) |           \
+                            ( (u64)(x) << ((-( (u64)(n) & 63u)) & 63u) )) )
+
+#define ROL64(x,n) ( (u64)(( (u64)(x) << ((u64)(n) & 63u) ) |           \
+                            ( (u64)(x) >> ((-( (u64)(n) & 63u)) & 63u) )) )
+
+#define MIN2(a, b)                                                      \
+    ((a) < (b)) ? (a) : (b)
+
+#define MIN3(a, b, c)                                                   \
+    (((a) < (b)) ? (((a) < (c)) ? (a) : (c)) : (((b) < (c)) ? (b) : (c)))
+
+#define MAX2(a, b)                                                      \
+    ((a) > (b)) ? (a) : (b)
+
+#define MAX3(a, b, c)                                                   \
+    (((a) > (b)) ? (((a) > (c)) ? (a) : (c)) : (((b) > (c)) ? (b) : (c)))
+
 // A small enough number.
 #define EPSILON (1e-11)
 #endif // HWANGFU_ARITHMETIC_HELPERS
