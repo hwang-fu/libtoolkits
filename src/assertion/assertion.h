@@ -219,6 +219,20 @@
 #define ASSERT_NEQ(o1, o2)                                              \
         ASSERTF(NEQ(o1, o2), BOLD "%s" ENDCRAYON " should not be equal to " BOLD "%s" ENDCRAYON, #o1, #o2)
 
+/**
+ * @since       02.11.2025
+ * @author		Junzhe
+ * @modified	02.11.2025
+ *
+ * @brief       Safely Check a Pointer.
+ *
+ * Asserts that a pointer is not @const {nil}. If the pointer is @const {nil},
+ * aborts the program with an error message with file, line, and function name.
+ *
+ * @param ptr Pointer to check.
+ */
+#define SCP(ptr)                                                        \
+        ASSERTF(ptr != nil, BOLD "nil" ENDCRAYON " pointer at " ITALIC " %s()" ENDCRAYON, __func__)
 
 
 /*——————————————————————————————————————————————————————————————————————————————————————————*/
