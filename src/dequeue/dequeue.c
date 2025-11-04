@@ -104,12 +104,60 @@ dq_pushback_exit_:
 
 arch dq_front(BORROWED Dequeue * dq)
 {
-    SCP(dq);
+    OWNED Result * result = dq_try_front(dq);
+    if (RESULT_GOOD(result))
+    {
+        return result_unwrap_owned(result, NIL);
+    }
+
+    u64 errcode = (u64) result->Failure;
+    result_dispose(result);
+    switch (errcode)
+    {
+        case 0:
+        {
+            PANIC("%s(): NIL argument.", __func__);
+        } break;
+
+        case 1:
+        {
+            PANIC("%s(): the dequeue is still empty.", __func__);
+        } break;
+
+        default:
+        {
+            PANIC("%s(): Unknown error.", __func__);
+        } break;
+    }
 }
 
 arch dq_back(BORROWED Dequeue * dq)
 {
-    SCP(dq);
+    OWNED Result * result = dq_try_back(dq);
+    if (RESULT_GOOD(result))
+    {
+        return result_unwrap_owned(result, NIL);
+    }
+
+    u64 errcode = (u64) result->Failure;
+    result_dispose(result);
+    switch (errcode)
+    {
+        case 0:
+        {
+            PANIC("%s(): NIL argument.", __func__);
+        } break;
+
+        case 1:
+        {
+            PANIC("%s(): the dequeue is still empty.", __func__);
+        } break;
+
+        default:
+        {
+            PANIC("%s(): Unknown error.", __func__);
+        } break;
+    }
 }
 
 arch dq_popfront(BORROWED Dequeue * dq)
@@ -126,7 +174,7 @@ OWNED Result * dq_try_at(BORROWED Dequeue * dq, u64 idx)
 {
     if (!dq)
     {
-        return mk_result(RESULT_FAILURE, 0);
+        return RESULT_FAIL(0);
     }
 
     if (dq->Size <= idx)
@@ -198,23 +246,38 @@ OWNED Result * dq_try_front(BORROWED Dequeue * dq)
 {
     if (!dq)
     {
-        return mk_result(RESULT_FAILURE, 0);
+        return RESULT_FAIL(0);
     }
+
+    if (EQ(dq->Size, 0))
+    {
+        return RESULT_FAIL(1);
+    }
+
+    return RESULT_SUCCEED(CAST(dq->Elements[0], arch));
 }
 
 OWNED Result * dq_try_back(BORROWED Dequeue * dq)
 {
     if (!dq)
     {
-        return mk_result(RESULT_FAILURE, 0);
+        return RESULT_FAIL(0);
     }
+
+    u64 size = dq->Size;
+    if (EQ(size, 0))
+    {
+        return RESULT_FAIL(1);
+    }
+
+    return RESULT_SUCCEED(CAST(dq->Elements[size-1], arch));
 }
 
 OWNED Result * dq_try_popfront(BORROWED Dequeue * dq)
 {
     if (!dq)
     {
-        return mk_result(RESULT_FAILURE, 0);
+        return RESULT_FAIL(0);
     }
 }
 
@@ -222,7 +285,7 @@ OWNED Result * dq_try_popback(BORROWED Dequeue * dq)
 {
     if (!dq)
     {
-        return mk_result(RESULT_FAILURE, 0);
+        return RESULT_FAIL(0);
     }
 }
 
@@ -235,7 +298,7 @@ OWNED Result * dq_try_get_size(BORROWED Dequeue * dq)
 {
     if (!dq)
     {
-        return mk_result(RESULT_FAILURE, 0);
+        return RESULT_FAIL(0);
     }
 }
 
@@ -248,7 +311,7 @@ OWNED Result * dq_try_get_capacity(BORROWED Dequeue * dq)
 {
     if (!dq)
     {
-        return mk_result(RESULT_FAILURE, 0);
+        return RESULT_FAIL(0);
     }
 }
 
